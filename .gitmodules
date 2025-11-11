@@ -1,0 +1,3 @@
+[submodule "Stack4Things_DockerCompose_deployment_test"]
+	path = Stack4Things_DockerCompose_deployment_test
+	url = https://github.com/SalvoSpinella/Stack4Things_DockerCompose_deployment_test

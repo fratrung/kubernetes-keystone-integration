@@ -1,0 +1,66 @@
+per creare i controller ho usato Kubebuilder eseguendo questi comandi:
+
+francesco@francesco:~/Desktop/kubernetes-keystone-integration/sync-controller$ kubebuilder create api --group iot --version v1alpha1 --kind Device
+INFO Create Resource [y/n] 
+y
+INFO Create Controller [y/n] 
+y
+INFO Writing kustomize manifests for you to edit... 
+INFO Writing scaffold for you to edit... 
+INFO api/v1alpha1/device_types.go 
+INFO api/v1alpha1/groupversion_info.go 
+INFO internal/controller/suite_test.go 
+INFO internal/controller/device_controller.go 
+INFO internal/controller/device_controller_test.go 
+INFO Update dependencies 
+INFO Running make 
+mkdir -p /home/francesco/Desktop/kubernetes-keystone-integration/sync-controller/bin
+Downloading sigs.k8s.io/controller-tools/cmd/controller-gen@v0.19.0
+go: downloading sigs.k8s.io/controller-tools v0.19.0
+go: downloading golang.org/x/tools v0.36.0
+go: downloading gopkg.in/yaml.v2 v2.4.0
+go: downloading github.com/fatih/color v1.18.0
+go: downloading github.com/gobuffalo/flect v1.0.3
+go: downloading k8s.io/code-generator v0.34.0
+go: downloading k8s.io/gengo/v2 v2.0.0-20250604051438-85fd79dbfd9f
+go: downloading github.com/spf13/pflag v1.0.7
+go: downloading github.com/go-logr/logr v1.4.3
+go: downloading golang.org/x/net v0.43.0
+go: downloading github.com/mattn/go-isatty v0.0.20
+go: downloading github.com/mattn/go-colorable v0.1.13
+go: downloading google.golang.org/protobuf v1.36.7
+go: downloading golang.org/x/sys v0.35.0
+go: downloading golang.org/x/text v0.28.0
+go: downloading golang.org/x/mod v0.27.0
+go: downloading golang.org/x/sync v0.16.0
+/home/francesco/Desktop/kubernetes-keystone-integration/sync-controller/bin/controller-gen object:headerFile="hack/boilerplate.go.txt" paths="./..."
+Next: implement your new API and generate the manifests (e.g. CRDs,CRs) with:
+$ make manifests
+francesco@francesco:~/Desktop/kubernetes-keystone-integration/sync-controller$ ls
+api  bin  cmd  config  Dockerfile  go.mod  go.sum  hack  internal  Makefile  PROJECT  README.md  test
+francesco@francesco:~/Desktop/kubernetes-keystone-integration/sync-controller$ code .
+francesco@francesco:~/Desktop/kubernetes-keystone-integration/sync-controller$ ls
+api  bin  cmd  config  Dockerfile  go.mod  go.sum  hack  internal  Makefile  PROJECT  README.md  test
+francesco@francesco:~/Desktop/kubernetes-keystone-integration/sync-controller$ make generate
+/home/francesco/Desktop/kubernetes-keystone-integration/sync-controller/bin/controller-gen object:headerFile="hack/boilerplate.go.txt" paths="./..."
+francesco@francesco:~/Desktop/kubernetes-keystone-integration/sync-controller$ make manifests
+/home/francesco/Desktop/kubernetes-keystone-integration/sync-controller/bin/controller-gen rbac:roleName=manager-role crd webhook paths="./..." output:crd:artifacts:config=config/crd/bases
+
+Da quì ho usato kubebuilder per creare il controller che dovrebbe sincronizzare le attivita svolte lato Keystone e quindi openstack e quindi s4t  in kubernetes così da gestire RBAC e ed i namespace del cluster.
+
+francesco@francesco:~/Desktop/kubernetes-keystone-integration/sync-controller$ kubebuilder create api --group sync --version v1alpha1 --kind KeystoneSync
+INFO Create Resource [y/n] 
+n
+INFO Create Controller [y/n] 
+y
+INFO Writing kustomize manifests for you to edit... 
+INFO Writing scaffold for you to edit... 
+INFO internal/controller/suite_test.go 
+INFO internal/controller/keystonesync_controller.go 
+INFO internal/controller/keystonesync_controller_test.go 
+INFO Update dependencies 
+francesco@francesco:~/Desktop/kubernetes-keystone-integration/sync-controller$ 
+
+
+
+
