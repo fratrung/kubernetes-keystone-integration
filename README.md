@@ -10,7 +10,7 @@ This project aims to bridge **OpenStack Keystone** — the identity and access m
 
 ---
 
-## 🧠 Architecture
+## Architecture
 
 The integration relies on a custom **Kubernetes Operator** (written in Go with Kubebuilder) that periodically synchronizes information between Keystone and the Kubernetes API.
 
