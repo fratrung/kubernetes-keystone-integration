@@ -11,23 +11,23 @@ This cluster will be used for developing and testing:
 
 ---
 
-## 🚀 1. Install k3d
+## Install k3d
 
 k3d is a lightweight wrapper to run Kubernetes (k3s) inside Docker.
 It is the recommended environment for developing operators and providers.
 
-### 📌 Requirements
+### Requirements
 - Docker installed and running
 - curl
 ---
 
-## 🐧 Install on Linux
+### Install on Linux
 
 ```bash
 curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
 ```
 
-### Create the cluster using the provided configuration file
+## Create the cluster using the provided configuration file
 
 Run the following command from the root of the repository:
 
@@ -46,7 +46,7 @@ This command will:
 - automatically update your kubeconfig
 
 
-### Verify that the cluster is running
+## Verify that the cluster is running
 
 List all clusters managed by k3d:
 
@@ -60,12 +60,12 @@ NAME                   SERVERS   AGENTS   LOADBALANCER
 stack4things-cluster   1/1       2/2      true
 ```
 
-### Set the kubeconfig context (optional but recommended)
+## Set the kubeconfig context (optional but recommended)
 ```bash
 kubectl config use-context k3d-stack4things-cluster
 ```
 
-### Verify cluster nodes
+## Verify cluster nodes
 ```bash
 kubectl get nodes
 ```
@@ -77,7 +77,7 @@ k3d-stack4things-cluster-agent-1    Ready    <none>                 13m   v1.31.
 k3d-stack4things-cluster-server-0   Ready    control-plane,master   13m   v1.31.5+k3s1
 ```
 
-### Check default namespaces
+## Check default namespaces
 
 ```bash
 kubectl get ns
