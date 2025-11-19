@@ -21,7 +21,7 @@ The operator includes several controllers:
 | Controller / Component            | Repository        | Description                                                                                   |
 |----------------------------------|-------------------|-----------------------------------------------------------------------------------------------|
 | **RBACController**               | rbac-operator     | Standalone Kubernetes operator built with Kubebuilder.                                        |
-|                                  | (separate repo)   | Responsible for LOCAL cluster resources:                                                      |
+|                                  |                   | Responsible for LOCAL cluster resources:                                                      |
 |                                  |                   | - Creates per-project Namespace                                                               |
 |                                  |                   | - Creates per-user Role and RoleBinding (OIDC preferred_username)                             |
 |                                  |                   | - Creates Keystone authentication Secret                                                      |
@@ -29,14 +29,14 @@ The operator includes several controllers:
 |                                  |                   | Does NOT interact with Stack4Things.                                                         |
 |----------------------------------|-------------------|-----------------------------------------------------------------------------------------------|
 | **ProjectController**            | s4t-provider      | Part of the Crossplane Provider for Stack4Things.                                             |
-|                                  | (same repo as     | Watches the `Project` custom resource.                                                        |
-|                                  | S4T Provider)     | Uses the Secret created by RBACController to authenticate to S4T.                             |
+|                                  |                   | Watches the `Project` custom resource.                                                        |
+|                                  |                   | Uses the Secret created by RBACController to authenticate to S4T.                             |
 |                                  |                   | Creates/updates/deletes projects on Stack4Things via Connector + ExternalClient.              |
 |                                  |                   | Syncs remote S4T project state back into the Project CR status.                               |
 |----------------------------------|-------------------|-----------------------------------------------------------------------------------------------|
 | **DeviceController**             | s4t-provider      | Crossplane managed resource controller.                                                       |
 |                                  |                   | Synchronizes IoTronic/Stack4Things devices with Kubernetes `Device` CRs.                      |
-|                                  |                   | Handles: Observe, Create, Update, Delete for S4T devices.                                     |
+|                                   |                   | Handles: Observe, Create, Update, Delete for S4T devices.                                     |
 |----------------------------------|-------------------|-----------------------------------------------------------------------------------------------|
 | **PluginController**             | s4t-provider      | Crossplane managed resource controller for IoTronic plugins.                                  |
 |                                  |                   | Responsible for injecting/uninjecting plugins on devices via S4T API.                         |
