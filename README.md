@@ -16,9 +16,9 @@ The integration relies on a custom **Kubernetes Operator** (written in Go with K
 
 ![Architecture Diagram](images/architecture.png)
 
-The operator includes several controllers:
+The architecture includes several components:
 
-| Controller / Component            | Repository        | Description                                                                                   |
+| Controller / Component           | Repository        | Description                                                                                   |
 |----------------------------------|-------------------|-----------------------------------------------------------------------------------------------|
 | **RBACController**               | rbac-operator     | Standalone Kubernetes operator built with Kubebuilder.                                        |
 |                                  |                   | Responsible for LOCAL cluster resources:                                                      |
@@ -26,7 +26,7 @@ The operator includes several controllers:
 |                                  |                   | - Creates per-user Role and RoleBinding (OIDC preferred_username)                             |
 |                                  |                   | - Creates Keystone authentication Secret                                                      |
 |                                  |                   | - Handles local cleanup via finalizers                                                        |
-|                                  |                   | Does NOT interact with Stack4Things.                                                         |
+|                                  |                   | Does NOT interact with Stack4Things.                                                          |
 |----------------------------------|-------------------|-----------------------------------------------------------------------------------------------|
 | **ProjectController**            | s4t-provider      | Part of the Crossplane Provider for Stack4Things.                                             |
 |                                  |                   | Watches the `Project` custom resource.                                                        |
@@ -36,7 +36,7 @@ The operator includes several controllers:
 |----------------------------------|-------------------|-----------------------------------------------------------------------------------------------|
 | **DeviceController**             | s4t-provider      | Crossplane managed resource controller.                                                       |
 |                                  |                   | Synchronizes IoTronic/Stack4Things devices with Kubernetes `Device` CRs.                      |
-|                                   |                   | Handles: Observe, Create, Update, Delete for S4T devices.                                     |
+|                                  |                   | Handles: Observe, Create, Update, Delete for S4T devices.                                     |
 |----------------------------------|-------------------|-----------------------------------------------------------------------------------------------|
 | **PluginController**             | s4t-provider      | Crossplane managed resource controller for IoTronic plugins.                                  |
 |                                  |                   | Responsible for injecting/uninjecting plugins on devices via S4T API.                         |
@@ -50,7 +50,7 @@ The operator includes several controllers:
 - Maintain **consistent multi-tenant RBAC policies** across systems
 - Represent **IoT/edge resources** (via Stack4Things) as Kubernetes-managed entities
 - Provide a foundation for **unified cloud-edge orchestration**
-
+- Allowing the user to manage Stack4things projects and resources through Kubernetes using the same Identity provided by Keystone
 ---
 
 ## Stack
