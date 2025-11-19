@@ -14,19 +14,19 @@ This project aims to bridge **OpenStack Keystone** — the identity and access m
 
 The integration is composed of two main components:
 
-### 1. **RBAC Controller (Local Kubernetes Operator)**
+### 1. **Stack4Things RBAC Operator (Local Kubernetes Operator)**
 A custom Kubernetes Operator written in Go with Kubebuilder.  
 It is responsible for managing *local cluster resources* derived from Keystone
 information and user project definitions.  
 This controller handles:
 
-- automatic creation of per-project Kubernetes namespaces  
-- dynamic Role + RoleBinding generation for OIDC/Keystone users  
-- creation of authentication Secrets (Keystone tokens)  
-- local project lifecycle cleanup via finalizers  
+- Automatic creation of per-project Kubernetes namespaces  
+- Dynamic Role + RoleBinding generation for OIDC/Keystone users  
+- Creation of authentication Secrets (Keystone tokens)  
+- Local project lifecycle cleanup via finalizers  
 
-It ensures that every Keystone project has an isolated Kubernetes environment
-with proper RBAC enforcement.
+**It ensures that every Keystone project has an isolated Kubernetes environment
+with proper RBAC enforcement.**
 
 ### 2. **Stack4Things Provider (Crossplane Provider)**
 A Crossplane Provider that integrates Kubernetes with the Stack4Things
@@ -38,9 +38,9 @@ It consumes the resources prepared by the RBAC Controller and manages
 - Devices  
 - Plugins  
 
-The provider implements the Crossplane `Connector` and `ExternalClient` pattern
+**The provider implements the Crossplane `Connector` and `ExternalClient` pattern
 to synchronize the state of Kubernetes CRDs with the corresponding resources in
-Stack4Things, ensuring end-to-end lifecycle management.
+Stack4Things, ensuring end-to-end lifecycle management.**
 
 ---
 
