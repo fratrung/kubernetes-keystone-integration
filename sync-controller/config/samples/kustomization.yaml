@@ -1,4 +1,0 @@
-## Append samples of your project ##
-resources:
-- iot_v1alpha1_device.yaml
-# +kubebuilder:scaffold:manifestskustomizesamples

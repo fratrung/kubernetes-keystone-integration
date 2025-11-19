@@ -1,3 +1,9 @@
 [submodule "Stack4Things_DockerCompose_deployment_test"]
 	path = Stack4Things_DockerCompose_deployment_test
 	url = https://github.com/SalvoSpinella/Stack4Things_DockerCompose_deployment_test
+[submodule "crossplane-s4t-provider"]
+	path = crossplane-s4t-provider
+	url = https://github.com/fratrung/crossplane-s4t-provider
+[submodule "s4t-rbac-operator"]
+	path = s4t-rbac-operator
+	url = https://github.com/fratrung/s4t-rbac-operator
