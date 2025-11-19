@@ -36,7 +36,10 @@ It consumes the resources prepared by the RBAC Controller and manages
 
 - S4T/IoTronic Projects  
 - Devices  
-- Plugins  
+- Plugins 
+- Service
+- BoardPluginInjection
+- BoardServiceInjection
 
 **The provider implements the Crossplane `Connector` and `ExternalClient` pattern
 to synchronize the state of Kubernetes CRDs with the corresponding resources in
