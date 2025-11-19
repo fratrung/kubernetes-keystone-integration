@@ -27,17 +27,17 @@ The architecture includes several components:
 |                                  |                   | - Creates Keystone authentication Secret                                                      |
 |                                  |                   | - Handles local cleanup via finalizers                                                        |
 |                                  |                   | Does NOT interact with Stack4Things.                                                          |
-|----------------------------------|-------------------|-----------------------------------------------------------------------------------------------|
+|                                  |                   |                                                                                               |
 | **ProjectController**            | s4t-provider      | Part of the Crossplane Provider for Stack4Things.                                             |
 |                                  |                   | Watches the `Project` custom resource.                                                        |
 |                                  |                   | Uses the Secret created by RBACController to authenticate to S4T.                             |
 |                                  |                   | Creates/updates/deletes projects on Stack4Things via Connector + ExternalClient.              |
 |                                  |                   | Syncs remote S4T project state back into the Project CR status.                               |
-|----------------------------------|-------------------|-----------------------------------------------------------------------------------------------|
+|                                  |                   |                                                                                               |
 | **DeviceController**             | s4t-provider      | Crossplane managed resource controller.                                                       |
 |                                  |                   | Synchronizes IoTronic/Stack4Things devices with Kubernetes `Device` CRs.                      |
 |                                  |                   | Handles: Observe, Create, Update, Delete for S4T devices.                                     |
-|----------------------------------|-------------------|-----------------------------------------------------------------------------------------------|
+|                                  |                   |                                                                                               |
 | **PluginController**             | s4t-provider      | Crossplane managed resource controller for IoTronic plugins.                                  |
 |                                  |                   | Responsible for injecting/uninjecting plugins on devices via S4T API.                         |
 |                                  |                   | Ensures plugin lifecycle on S4T matches the state of the `Plugin` CR in Kubernetes.           |
