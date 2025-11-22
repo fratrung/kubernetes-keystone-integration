@@ -22,8 +22,8 @@ This controller handles:
 
 - Automatic creation of per-project Kubernetes namespaces  
 - Dynamic Role + RoleBinding generation for OIDC/Keystone users  
-- Creation of authentication Secrets (Keystone tokens)  
-- Local project lifecycle cleanup via finalizers  
+- Local project lifecycle cleanup via finalizers 
+- Set the new CR Project status to Ready
 
 **It ensures that every Keystone project has an isolated Kubernetes environment
 with proper RBAC enforcement.**
@@ -34,7 +34,7 @@ A Crossplane Provider that integrates Kubernetes with the Stack4Things
 It consumes the resources prepared by the RBAC Controller and manages
 *remote resources* inside Stack4Things, such as:
 
-- S4T/IoTronic Projects  
+- S4T Projects  
 - Devices  
 - Plugins 
 - Service
