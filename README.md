@@ -81,21 +81,31 @@ Stack4Things, ensuring end-to-end lifecycle management.**
 Creating a new `Project` resource automatically initializes the corresponding Stack4Things environment for the authenticated user.  
 The flow involves OIDC authentication, a Mutating Admission Webhook, etcd persistence, and the RBAC Operator that prepares the user’s development space.
 
-### Sequence Diagram
-
 ![RBAC Operator Sequence Diagram](images/RBAC_Operator_Sequence_Diagram.drawio.png)
 
 ### Flow Summary
 
 - The user submits a `Project` using a Keystone OIDC JWT (`kubectl --token="$JWT" apply -f project.yaml`).
 - The Kubernetes API Server authenticates the JWT and extracts the user identity.
-- The **Mutating Webhook** injects the authenticated username into `spec.owner` and defaults `spec.namespace`.
+- The **Mutating Webhook** injects the authenticated username into `spec.owner` and defaults `spec.ownerRole`(?).
 - The mutated CRD is validated and stored in **etcd**.
 - The **RBAC Operator** detects the new Project and provisions:
   - a dedicated Namespace  
   - a Role defining project-level permissions  
   - a RoleBinding mapping the Keystone user to the Role  
-- Once the setup is complete, the operator marks the Project as **Ready**, enabling the S4T Crossplane provider.
+- Once the setup is complete, the operator marks the Project as **Ready**, enabling the S4T Crossplane provider to manage the remote resource in Stack4things.
+
+---
+
+## Update S4T Project 
+
+WIP
+
+---
+
+## Delete S4T Project
+
+WIP
 
 ---
 
