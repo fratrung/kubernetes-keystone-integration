@@ -1,0 +1,42 @@
+Listen 5000
+
+<VirtualHost *:5000>
+    ServerName localhost
+    LogLevel debug
+    ErrorLog /var/log/apache2/keystone.log
+    CustomLog /var/log/apache2/keystone_access.log combined
+
+    WSGIDaemonProcess keystone-public processes=5 threads=1 user=keystone group=keystone display-name=%{GROUP}
+    WSGIProcessGroup keystone-public
+    WSGIScriptAlias / /usr/bin/keystone-wsgi-public
+    WSGIApplicationGroup %{GLOBAL}
+    WSGIPassAuthorization On
+
+    <Directory /usr/bin>
+        <IfVersion >= 2.4>
+            Require all granted
+        </IfVersion>
+        <IfVersion < 2.4>
+            Order allow,deny
+            Allow from all
+        </IfVersion>
+    </Directory>
+
+    OIDCClaimPrefix "OIDC-"
+    OIDCResponseType "code"
+    OIDCScope "openid email profile"
+    OIDCProviderMetadataURL http://keycloak:8081/realms/openstack/.well-known/openid-configuration
+
+    OIDCClientID ${OIDC_CLIENT_ID}
+    OIDCClientSecret ${OIDC_CLIENT_SECRET}
+
+    OIDCRedirectURI http://localhost:5000/v3/auth/OS-FEDERATION/websso/mapped/redirect
+
+    OIDCCryptoPassphrase password_lunga_e_casuale_per_sicurezza
+
+    <Location /v3/auth/OS-FEDERATION/websso/mapped>
+      AuthType openid-connect
+      Require valid-user
+      LogLevel debug
+    </Location>
+</VirtualHost>

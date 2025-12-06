@@ -1,0 +1,25 @@
+[
+    {
+        "local": [
+            {
+                "user": {
+                    "name": "{0}",
+                    "domain": {
+                        "name": "federated_domain"
+                    }
+                },
+                "group": {
+                    "name": "federated_users",
+                    "domain": {
+                        "name": "federated_domain"
+                    }
+                }
+            }
+        ],
+        "remote": [
+            {
+                "type": "OIDC-preferred_username"
+            }
+        ]
+    }
+]

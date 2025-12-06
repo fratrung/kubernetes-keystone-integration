@@ -1,0 +1,48 @@
+{
+  "realm": "stack4things",
+  "enabled": true,
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": true,
+  "resetPasswordAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "rememberMe": true,
+  "internationalizationEnabled": false,
+
+  "clients": [
+    {
+      "clientId": "keystone",
+      "name": "Keystone",
+      "enabled": true,
+      "protocol": "openid-connect",
+
+      "publicClient": false,
+      "secret": "6OWR6HQAqfWQ2AES8S3uSsW3O52Mw4RJ",
+
+      "redirectUris": [
+        "http://localhost:5000/v3/auth/OS-FEDERATION/websso/mapped/redirect"
+      ],
+      "webOrigins": [],
+
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false
+    }
+  ],
+
+  "users": [
+    {
+      "username": "testuser",
+      "enabled": true,
+      "emailVerified": true,
+      "email": "testuser@example.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "testpassword",
+          "temporary": false
+        }
+      ]
+    }
+  ]
+}
