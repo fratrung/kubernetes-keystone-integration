@@ -4,10 +4,17 @@ metadata:
   name: stack4things-cluster
 servers: 1
 agents: 2
-ports:
-  - port: 8080:80
-    nodeFilters:
-      - loadbalancer
-  - port: 8443:443
-    nodeFilters:
-      - loadbalancer
+
+options:
+  k3s:
+    extraArgs:
+      - arg: "--kube-apiserver-arg=oidc-issuer-url=https://host.k3d.internal:8443/realms/stack4things"
+        nodeFilters: ["server:*"]
+      - arg: "--kube-apiserver-arg=oidc-client-id=kubernetes"
+        nodeFilters: ["server:*"]
+      - arg: "--kube-apiserver-arg=oidc-username-claim=preferred_username"
+        nodeFilters: ["server:*"]
+      - arg: "--kube-apiserver-arg=oidc-groups-claim=groups"
+        nodeFilters: ["server:*"]
+      - arg: "--kube-apiserver-arg=oidc-groups-prefix=keycloak:"
+        nodeFilters: ["server:*"]
