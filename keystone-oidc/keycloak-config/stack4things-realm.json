@@ -8,6 +8,12 @@
   "rememberMe": true,
   "internationalizationEnabled": false,
 
+  "groups": [
+    {
+      "name": "s4t:devs"
+    }
+  ],
+
   "clients": [
     {
       "clientId": "keystone",
@@ -27,6 +33,63 @@
       "implicitFlowEnabled": false,
       "directAccessGrantsEnabled": false,
       "serviceAccountsEnabled": false
+    },
+    {
+      "clientId": "kubernetes",
+      "name": "Kubernetes",
+      "enabled": true,
+      "protocol": "openid-connect",
+
+      "publicClient": true,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+
+      "fullScopeAllowed": true,
+
+      "protocolMappers": [
+        {
+          "name": "groups",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-group-membership-mapper",
+          "consentRequired": false,
+          "config": {
+            "full.path": "false",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "claim.name": "groups",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "preferred_username",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-property-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "username",
+            "claim.name": "preferred_username",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        },
+        {
+          "name": "audience-kubernetes",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "kubernetes",
+            "id.token.claim": "true",
+            "access.token.claim": "true"
+          }
+        }
+      ]
     }
   ],
 
@@ -35,7 +98,10 @@
       "username": "testuser",
       "enabled": true,
       "emailVerified": true,
+      "firstName": "Test",
+      "lastName": "User",
       "email": "testuser@example.com",
+      "groups": ["s4t:devs"],
       "credentials": [
         {
           "type": "password",

@@ -1,17 +1,19 @@
 
 services:
 
-  # ... (i tuoi servizi keycloak, postgres, keystone, mariadb rimangono uguali) ...
-  # Assicurati solo che keystone sia accessibile a horizon tramite la rete auth-net
-
   keycloak:
     image: quay.io/keycloak/keycloak:24.0.4
     container_name: keycloak
-    command: ["start-dev", "--import-realm"]
+    command: 
+      - start-dev
+      - --import-realm
+      - --https-port=8443
+      - --https-certificate-file=/opt/keycloak/certs/keycloak.crt
+      - --https-certificate-key-file=/opt/keycloak/certs/keycloak.key
+
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
-
       KC_DB: postgres
       KC_DB_URL_HOST: postgres
       KC_DB_URL_PORT: 5432
@@ -19,14 +21,24 @@ services:
       KC_DB_USERNAME: keycloak
       KC_DB_PASSWORD: password_keycloak
 
-      KC_HOSTNAME: localhost
-      KC_HOSTNAME_PORT: 8081
+      #KC_HOSTNAME: localhost
+      #KC_HOSTNAME_PORT: 8081
+      #KC_PROXY: edge
+
+      #Test
+      KC_HOSTNAME: host.k3d.internal
+      KC_HOSTNAME_PORT: 8443
+      KC_HOSTNAME_STRICT: false
       KC_PROXY: edge
+      
+
     ports:
       - "8081:8080"
+      - "8443:8443"   # HTTPS
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./keycloak-config/stack4things-realm.json:/opt/keycloak/data/import/stack4things-realm.json
+      - ./keycloak-config/certs:/opt/keycloak/certs:ro
     networks:
       - auth-net
     depends_on:
@@ -63,8 +75,6 @@ services:
     depends_on:
       - mariadb
       - keycloak
-
-  
 
   mariadb:
     image: mariadb:10.6
