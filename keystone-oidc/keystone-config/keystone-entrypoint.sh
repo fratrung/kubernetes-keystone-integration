@@ -62,9 +62,9 @@ if [ ! -f "$MARKER_FILE" ]; then
   echo ">>> openstack domain create federated_domain"
   openstack domain create federated_domain || true
 
-  echo ">>> openstack identity provider create keycloak --remote-id http://localhost:8081/realms/stack4things"
+  echo ">>> openstack identity provider create keycloak --remote-id https://k3d.host.internal:8443/realms/stack4things"
   openstack identity provider create keycloak \
-    --remote-id http://localhost:8081/realms/stack4things || true
+    --remote-id https://k3d.host.internal:8443/realms/stack4things || true
 
   echo ">>> openstack mapping create keycloak_mapping --rules /etc/keystone/keystone-mapping.json"
   openstack mapping create keycloak_mapping \

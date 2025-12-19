@@ -31,12 +31,11 @@ services:
       KC_HOSTNAME_STRICT: false
       KC_PROXY: edge
       
-
     ports:
       - "8081:8080"
       - "8443:8443"   # HTTPS
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+   #   - postgres_data:/var/lib/postgresql/data
       - ./keycloak-config/stack4things-realm.json:/opt/keycloak/data/import/stack4things-realm.json
       - ./keycloak-config/certs:/opt/keycloak/certs:ro
     networks:

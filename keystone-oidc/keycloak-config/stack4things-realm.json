@@ -9,10 +9,10 @@
   "internationalizationEnabled": false,
 
   "groups": [
-    {
-      "name": "s4t:devs"
-    }
+    { "name": "s4t:iot-lab:admin" },
+    {"name": "s4t:project-creator" }
   ],
+ 
 
   "clients": [
     {
@@ -34,6 +34,7 @@
       "directAccessGrantsEnabled": false,
       "serviceAccountsEnabled": false
     },
+    
     {
       "clientId": "kubernetes",
       "name": "Kubernetes",
@@ -41,11 +42,24 @@
       "protocol": "openid-connect",
 
       "publicClient": true,
-      "standardFlowEnabled": false,
+      "standardFlowEnabled": true,
       "implicitFlowEnabled": false,
 
       "directAccessGrantsEnabled": true,
       "serviceAccountsEnabled": false,
+      "redirectUris": [
+        "http://localhost:8000/*",
+        "http://127.0.0.1:8000/*",
+        "http://localhost:18000/*",
+        "http://127.0.0.1:18000/*"
+      ],
+      
+      "webOrigins": [
+        "http://localhost:8000",
+        "http://127.0.0.1:8000",
+        "http://localhost:18000",
+        "http://127.0.0.1:18000"
+      ],
 
       "fullScopeAllowed": true,
 
@@ -101,7 +115,7 @@
       "firstName": "Test",
       "lastName": "User",
       "email": "testuser@example.com",
-      "groups": ["s4t:devs"],
+      "groups": ["s4t:project-creator", "s4t:iot-lab:admin"],
       "credentials": [
         {
           "type": "password",
