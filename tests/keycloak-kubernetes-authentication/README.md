@@ -5,7 +5,7 @@ switching contexts and verifying RBAC restrictions.
 
 ---
 ## Prerequisites
-Directory requirement
+
 The commands in Step 1 must be executed from a directory such that the following file exists relative to the current working directory:
 ```bash
 ../../resources/k3d-cluster/certificate/certs/ca.crt
