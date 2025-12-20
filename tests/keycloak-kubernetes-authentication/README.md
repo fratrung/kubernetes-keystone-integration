@@ -23,9 +23,7 @@ bash```
 API_SERVER=$(kubectl config view --minify -o jsonpath='{.clusters[0].cluster.server}')
 SERVER=${API_SERVER/0.0.0.0/127.0.0.1}
 CA_DATA=$(kubectl config view --raw --minify -o jsonpath='{.clusters[0].cluster.certificate-authority-data}')
-```
 
-bash```
 cat > /tmp/kc-oidc.yaml <<EOF
 apiVersion: v1
 kind: Config
@@ -56,9 +54,7 @@ mv /tmp/config.merged ~/.kube/config
 bash```
 kubectl config use-context testuser
 kubectl auth whoami
-```
 
-bash```
 kubectl get nodes
 kubectl get pods
 ```
