@@ -6,7 +6,7 @@ servers: 1
 agents: 2
 
 volumes:
-  - volume: /home/francesco/Desktop/kubernetes-keystone-integration/resources/k3d-cluster/certs/keycloak.crt:/etc/k3d/keycloak.crt:ro # mettere il path assoluto 
+  - volume: /home/francesco/Desktop/kubernetes-keystone-integration/resources/k3d-cluster/certificate/certs/ca.crt:/etc/k3d/keycloak-ca.crt:ro # mettere il path assoluto 
     nodeFilters:
       - server:*
 options:
@@ -22,5 +22,5 @@ options:
         nodeFilters: ["server:*"]
       - arg: "--kube-apiserver-arg=oidc-groups-prefix=keycloak:"
         nodeFilters: ["server:*"]
-      - arg: "--kube-apiserver-arg=oidc-ca-file=/etc/k3d/keycloak.crt"
+      - arg: "--kube-apiserver-arg=oidc-ca-file=/etc/k3d/keycloak-ca.crt"
         nodeFilters: ["server:*"]
