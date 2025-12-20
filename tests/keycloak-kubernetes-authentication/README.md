@@ -9,7 +9,7 @@ switching contexts and verifying RBAC restrictions.
 ## 1. Get an OIDC Token from Keycloak
 
 ```bash
-TOKEN=$(curl -s --cacert ca.crt \
+TOKEN=$(curl -s --cacert ../../resources/k3d-cluster/certificate/certs/ca.crt \
   -X POST "https://host.k3d.internal:8443/realms/stack4things/protocol/openid-connect/token" \
   -H "Content-Type: application/x-www-form-urlencoded" \
   -d "grant_type=password" \
