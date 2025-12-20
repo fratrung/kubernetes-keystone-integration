@@ -4,7 +4,14 @@ This short guide shows how to test Kubernetes access using an OIDC user by
 switching contexts and verifying RBAC restrictions.
 
 ---
-
+## Prerequisites
+Directory requirement
+The commands in Step 1 must be executed from a directory such that the following file exists relative to the current working directory:
+```bash
+../../resources/k3d-cluster/certificate/certs/ca.crt
+```
+This file contains the Certificate Authority (CA) used to sign the TLS certificate of Keycloak.
+If your directory layout is different, adjust the --cacert path accordingly.
 
 ## 1. Get an OIDC Token from Keycloak
 
