@@ -19,11 +19,13 @@ TOKEN=$(curl -s --cacert ca.crt \
 ```
 
 ## 2. Add the OIDC User Context
-bash```
+```bash
 API_SERVER=$(kubectl config view --minify -o jsonpath='{.clusters[0].cluster.server}')
 SERVER=${API_SERVER/0.0.0.0/127.0.0.1}
 CA_DATA=$(kubectl config view --raw --minify -o jsonpath='{.clusters[0].cluster.certificate-authority-data}')
+```
 
+```bash
 cat > /tmp/kc-oidc.yaml <<EOF
 apiVersion: v1
 kind: Config
@@ -45,27 +47,28 @@ current-context: testuser
 EOF
 ```
 
-bash```
+```bash
 kubectl config view --kubeconfig ~/.kube/config:/tmp/kc-oidc.yaml --flatten > /tmp/config.merged
 mv /tmp/config.merged ~/.kube/config
 ```
 
 ## 3. Switch Context and Test Access
-bash```
+```bash
 kubectl config use-context testuser
 kubectl auth whoami
-
+``` 
+```bash
 kubectl get nodes
 kubectl get pods
 ```
 
 Expected result: 
 
-bash```
+```bash
 Error from server (Forbidden): pods is forbidden: User "https://host.k3d.internal:8443/realms/stack4things#testuser" cannot list resource "pods" in API group "" in the namespace "default"
 ```
 ## 4. Switch Back to Admin
-bash```
+```bash
 kubectl config use-context k3d-stack4things-cluster
 ```
  
