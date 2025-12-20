@@ -16,7 +16,7 @@ TOKEN=$(curl -s --cacert ca.crt \
   -d "client_id=kubernetes" \
   -d "username=testuser" \
   -d "password=testpassword" | jq -r .access_token)
-  ```
+```
 
 ## 2. Add the OIDC User Context
 bash```
@@ -45,12 +45,11 @@ contexts:
     user: testuser-oidc
 current-context: testuser
 EOF
-
 ```
+
 bash```
 kubectl config view --kubeconfig ~/.kube/config:/tmp/kc-oidc.yaml --flatten > /tmp/config.merged
 mv /tmp/config.merged ~/.kube/config
-
 ```
 
 ## 3. Switch Context and Test Access
@@ -58,10 +57,12 @@ bash```
 kubectl config use-context testuser
 kubectl auth whoami
 ```
+
 bash```
 kubectl get nodes
 kubectl get pods
 ```
+
 Expected result: 
 
 bash```
