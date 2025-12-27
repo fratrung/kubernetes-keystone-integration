@@ -27,36 +27,18 @@ TOKEN=$(curl -s --cacert ../../resources/k3d-cluster/certificate/certs/ca.crt \
 
 ## 2. Add the OIDC User Context
 ```bash
-API_SERVER=$(kubectl config view --minify -o jsonpath='{.clusters[0].cluster.server}')
-SERVER=${API_SERVER/0.0.0.0/127.0.0.1}
-CA_DATA=$(kubectl config view --raw --minify -o jsonpath='{.clusters[0].cluster.certificate-authority-data}')
+CLUSTER=$(kubectl config view --minify -o jsonpath='{.contexts[0].context.cluster}')
+echo "$CLUSTER"
 ```
 
 ```bash
-cat > /tmp/kc-oidc.yaml <<EOF
-apiVersion: v1
-kind: Config
-clusters:
-- name: k3d-stack4things-cluster
-  cluster:
-    server: ${SERVER}
-    certificate-authority-data: ${CA_DATA}
-users:
-- name: testuser-oidc
-  user:
-    token: ${TOKEN}
-contexts:
-- name: testuser
-  context:
-    cluster: k3d-stack4things-cluster
-    user: testuser-oidc
-current-context: testuser
-EOF
+kubectl config set-credentials testuser-oidc --token="$TOKEN"
 ```
 
 ```bash
-kubectl config view --kubeconfig ~/.kube/config:/tmp/kc-oidc.yaml --flatten > /tmp/config.merged
-mv /tmp/config.merged ~/.kube/config
+kubectl config set-context testuser \
+  --cluster="$CLUSTER" \
+  --user=testuser-oidc
 ```
 
 ## 3. Switch Context and Test Access
@@ -77,5 +59,12 @@ Error from server (Forbidden): pods is forbidden: User "https://host.k3d.interna
 ## 4. Switch Back to Admin
 ```bash
 kubectl config use-context k3d-stack4things-cluster
+kubectl get nodes 
 ```
  
+ (Optional) Delete testuser context:
+
+```bash
+kubectl config delete-context testuser
+kubectl config delete-user testuser-oidc
+```

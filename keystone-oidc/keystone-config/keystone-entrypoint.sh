@@ -53,27 +53,70 @@ if [ ! -f "$MARKER_FILE" ]; then
 
   echo ">>> Fase 3: configurazione federazione"
 
-  echo ">>> openstack group create federated_users"
-  openstack group create federated_users || true
-
-  echo ">>> openstack role add --group federated_users --project admin admin"
-  openstack role add --group federated_users --project admin admin || true
-
-  echo ">>> openstack domain create federated_domain"
+  # Domain dove vivono identità/gruppi federati (pulito)
   openstack domain create federated_domain || true
 
-  echo ">>> openstack identity provider create keycloak --remote-id https://host.k3d.internal:8443/realms/stack4things"
+  # Gruppo "catch-all" per chi entra via federazione (permessi minimi)
+  openstack group create --domain federated_domain federated_users || true
+
+  # Progetto "holding" senza privilegi reali
+  openstack project create federated_access --domain federated_domain || true
+  # usa reader se esiste, altrimenti member
+  openstack role add --group federated_users --group-domain federated_domain \
+    --project federated_access --project-domain federated_domain reader || true
+
+  # Gruppo provider/platform admin (questi fanno provisioning)
+  openstack group create --domain federated_domain s4t:platform-admins || true
+  openstack role add --group s4t:platform-admins --group-domain federated_domain \
+    --domain federated_domain admin || true
+
+  # Gruppo "project creator" (flag/logico: lo userai lato S4T/Kubernetes, NON qui)
+  openstack group create --domain federated_domain s4t:project-creator || true
+
+   # Progetto IoT lab nel dominio Default (quello standard dei progetti)
+  openstack project create iot-lab --domain Default || true
+
+  # Gruppi specifici iot-lab nel dominio federated_domain
+  openstack group create --domain federated_domain 's4t:testuser-iot-lab:admin'  || true
+  openstack group create --domain federated_domain 's4t:testuser-iot-lab:member' || true
+  openstack group create --domain federated_domain 's4t:testuser-iot-lab:user'   || true
+
+  # Assegna ruoli ai gruppi sul progetto iot-lab
+  # Admin del progetto
+  openstack role add \
+    --group 's4t:testuser-iot-lab:admin' \
+    --group-domain federated_domain \
+    --project iot-lab \
+    --project-domain Default \
+    admin || true
+
+    # Member (dev/power user)
+  openstack role add \
+    --group 's4t:testuser-iot-lab:member' \
+    --group-domain federated_domain \
+    --project iot-lab \
+    --project-domain Default \
+    member || true
+
+  # User (solo utilizzo servizi / reader)
+  openstack role add \
+    --group 's4t:testuser-iot-lab:user' \
+    --group-domain federated_domain \
+    --project iot-lab \
+    --project-domain Default \
+    reader || true
+
+  # IdP + mapping + protocol
   openstack identity provider create keycloak \
     --remote-id https://host.k3d.internal:8443/realms/stack4things || true
 
-  echo ">>> openstack mapping create keycloak_mapping --rules /etc/keystone/keystone-mapping.json"
   openstack mapping create keycloak_mapping \
     --rules /etc/keystone/keystone-mapping.json || true
 
-  echo ">>> openstack federation protocol create mapped --identity-provider keycloak --mapping keycloak_mapping"
   openstack federation protocol create mapped \
     --identity-provider keycloak \
     --mapping keycloak_mapping || true
+
 
   echo ">>> Fase 3 completata"
 

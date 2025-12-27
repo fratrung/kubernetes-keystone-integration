@@ -9,7 +9,7 @@
   "internationalizationEnabled": false,
 
   "groups": [
-    { "name": "s4t:iot-lab:admin" },
+    { "name": "s4t:testuser-iot-lab:admin" },
     {"name": "s4t:project-creator" }
   ],
  
@@ -31,7 +31,7 @@
 
       "standardFlowEnabled": true,
       "implicitFlowEnabled": false,
-      "directAccessGrantsEnabled": false,
+      "directAccessGrantsEnabled": true,
       "serviceAccountsEnabled": false,
       "protocolMappers": [
       {
@@ -60,6 +60,17 @@
           "id.token.claim": "true",
           "access.token.claim": "true",
           "userinfo.token.claim": "true"
+        }
+      },
+      {
+        "name": "audience-keystone",
+        "protocol": "openid-connect",
+        "protocolMapper": "oidc-audience-mapper",
+        "consentRequired": false,
+        "config": {
+          "included.client.audience": "keystone",
+          "id.token.claim": "true",
+          "access.token.claim": "true"
         }
       }
     ]
@@ -145,7 +156,7 @@
       "firstName": "Test",
       "lastName": "User",
       "email": "testuser@example.com",
-      "groups": ["s4t:project-creator", "s4t:iot-lab:admin"],
+      "groups": ["s4t:project-creator", "s4t:testuser-iot-lab:admin"],
       "credentials": [
         {
           "type": "password",
