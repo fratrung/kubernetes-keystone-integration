@@ -1,0 +1,8 @@
+apiVersion: s4t.s4t.io/v1alpha1
+kind: Project
+metadata:
+  name: s4t-project-iot-lab
+spec:
+  projectName: iot-lab
+  owner: https://host.k3d.internal:8443/realms/stack4things#testuser
+

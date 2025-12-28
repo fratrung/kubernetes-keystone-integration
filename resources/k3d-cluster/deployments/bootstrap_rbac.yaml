@@ -3,12 +3,9 @@ kind: ClusterRole
 metadata:
   name: s4t-project-creator
 rules:
-- apiGroups: ["platform.stack4things.io"]
+- apiGroups: ["s4t.s4t.io"]
   resources: ["projects"]
-  verbs: ["create", "get", "list", "watch"]
-- apiGroups: ["platform.stack4things.io"]
-  resources: ["projects/status"]
-  verbs: ["get"]
+  verbs: ["create","get","patch"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -16,7 +13,7 @@ metadata:
   name: s4t-project-creator-binding
 subjects:
 - kind: Group
-  name: keycloak:s4t:project-creator
+  name: s4t:project-creator
   apiGroup: rbac.authorization.k8s.io
 roleRef:
   kind: ClusterRole

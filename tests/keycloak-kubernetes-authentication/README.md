@@ -31,6 +31,7 @@ CLUSTER=$(kubectl config view --minify -o jsonpath='{.contexts[0].context.cluste
 echo "$CLUSTER"
 ```
 
+
 ```bash
 kubectl config set-credentials testuser-oidc --token="$TOKEN"
 ```

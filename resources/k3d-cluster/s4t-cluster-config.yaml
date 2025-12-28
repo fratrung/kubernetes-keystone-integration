@@ -20,7 +20,7 @@ options:
         nodeFilters: ["server:*"]
       - arg: "--kube-apiserver-arg=oidc-groups-claim=groups"
         nodeFilters: ["server:*"]
-      - arg: "--kube-apiserver-arg=oidc-groups-prefix=keycloak:"
-        nodeFilters: ["server:*"]
+      #- arg: "--kube-apiserver-arg=oidc-groups-prefix=keycloak:"
+      #  nodeFilters: ["server:*"]
       - arg: "--kube-apiserver-arg=oidc-ca-file=/etc/k3d/keycloak-ca.crt"
         nodeFilters: ["server:*"]
