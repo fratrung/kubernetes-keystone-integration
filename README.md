@@ -87,12 +87,27 @@ The flow involves OIDC authentication, a Mutating Admission Webhook, etcd persis
 
 - The user submits a `Project` using a Keystone OIDC JWT (`kubectl --token="$JWT" apply -f project.yaml`).
 - The Kubernetes API Server authenticates the JWT and extracts the user identity.
-- The **Mutating Webhook** injects the authenticated username into `spec.owner` and defaults `spec.ownerRole`(?).
+- The **Mutating Webhook** injects the authenticated username into `spec.owner`.
 - The mutated CRD is validated and stored in **etcd**.
 - The **RBAC Operator** detects the new Project and provisions:
   - a dedicated Namespace  
-  - a Role defining project-level permissions  
+  - a Role defining project-level permissions.
   - a RoleBinding mapping the Keystone user to the Role  
+- For each S4T Project, the RBAC Operator creates and manages a set of **federated groups** following a deterministic naming convention:
+```bash
+s4t:<owner>-<projectName>:<role>
+```
+
+where `<role>` can be one of:
+
+- `admin_iot_project`  
+  Full administrative permissions on the project.
+- `member_iot_project`  
+  Developer / power-user permissions.
+- `user_iot_project`  
+  Read-only or limited service usage permissions.
+
+These groups are bound to the corresponding Kubernetes `Role` objects through `RoleBinding` resources, enabling RBAC enforcement based on OIDC group claims.
 - Once the setup is complete, the operator marks the Project as **Ready**, enabling the S4T Crossplane provider to manage the remote resource in Stack4things.
 
 ---
@@ -120,11 +135,12 @@ WIP
 
 ## Stack
 
-- **Language:** Go (Kubebuilder and Crossplane provider)
-- **Identity provider:** OpenStack Keystone
-- **Edge framework:** Stack4Things (IoTronic)
-- **Authentication:** OIDC federation
-- **Target platform:** Kubernetes ≥ 1.28
+- **Language:** Go (Kubebuilder and Crossplane S4T provider)
+- **Identity provider:** Keycloak
+- **Identity service:** OpenStack Keystone
+- **Edge framework:** Stack4Things 
+- **Authentication:** OIDC federation 
+- **Platform:** Kubernetes
 
 ---
 
