@@ -89,7 +89,14 @@ The flow involves OIDC authentication, a Mutating Admission Webhook, etcd persis
 
 ### Flow Summary
 
-- The user submits a new `Project` using a Keystone OIDC JWT (`kubectl --token="$JWT" apply -f project.yaml`).
+- The user authenticates to the Kubernetes API Server by configuring their
+  `kubectl` context with an OIDC JWT issued by Keycloak (federated Identity Provider),
+  and then creates a new `Project` resource via:
+
+  ```bash
+  kubectl apply -f project.yaml
+  ```
+
 - The Kubernetes API Server authenticates the JWT via OIDC and extracts the user identity and group memberships.
 - The **Mutating Webhook** injects the authenticated username into `spec.owner`.
 - The new Project CR is validated and persisted in **etcd**
