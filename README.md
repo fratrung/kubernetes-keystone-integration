@@ -1,4 +1,4 @@
-# kubernetes-keystone-integration
+# Kubernetes-Keystone-Federation
 
 Integration layer between **OpenStack Keystone** and **Kubernetes** to enable unified authentication, authorization, and resource synchronization across cloud and edge environments.
 
@@ -8,7 +8,19 @@ Integration layer between **OpenStack Keystone** and **Kubernetes** to enable un
 
 This project aims to bridge **OpenStack Keystone** — the identity and access management service of OpenStack — with **Kubernetes**, providing a **single source of identity** for both cloud and edge resources.
 
----
+While Keystone provides robust identity management for OpenStack, it has **limited native support for multi-cloud or cross-platform authentication**. In particular:
+
+- Keystone’s federated identity support is designed primarily for OpenStack itself, making direct integration with Kubernetes OIDC non straightforward.
+- It does not natively issue tokens that are directly consumable by Kubernetes, requiring mapping or translation layers.
+- Multi-tenant and multi-IdP scenarios are cumbersome to manage solely within Keystone.
+
+To overcome these limitations, **Keycloak is introduced as a federated Identity Provider (IdP)**. Keycloak enables:
+
+- Standardized **OIDC token issuance** consumable by Kubernetes API server.
+- Seamless **federation of external IdPs** (e.g., corporate SAML/LDAP) into a unified identity model.
+- Dynamic **group and role mapping** that can be synchronized with Keystone, allowing RBAC enforcement across both OpenStack and Kubernetes.
+
+By integrating Keycloak, this layer provides a **single authentication point** for users across cloud and edge, while allowing Keystone to continue managing OpenStack-native roles and projects.
 
 ## Architecture
 
