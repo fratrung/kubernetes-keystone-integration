@@ -97,7 +97,8 @@ The flow involves OIDC authentication, a Mutating Admission Webhook, etcd persis
   kubectl apply -f project.yaml
   ```
 
-- The Kubernetes API Server authenticates the JWT via OIDC and extracts the user identity and group memberships.
+- The Kubernetes API Server validates the JWT via OIDC, verifies its signature and
+  claims, and extracts the user identity and group memberships.
 - The **Mutating Webhook** injects the authenticated username into `spec.owner`.
 - The new Project CR is validated and persisted in **etcd**
 - The **RBAC Operator** detects  the new Project resource and provisions the required access control and isolation primitives:
