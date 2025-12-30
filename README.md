@@ -55,7 +55,8 @@ Stack4Things, ensuring end-to-end lifecycle management.**
 | **RBACController**               | rbac-operator     | Standalone Kubernetes operator built with Kubebuilder.                                        |
 |                                  |                   | Responsible for LOCAL cluster resources:                                                      |
 |                                  |                   | - Creates per-project Namespace                                                               |
-|                                  |                   | - Creates per-user Role and RoleBinding (OIDC preferred_username)                             |
+|                                  |                   | - Creates project-level Roles (admin / member / user)                                         |
+|                                  |                   | - Creates RoleBindings based on federated OIDC groups                                         |
 |                                  |                   | - Creates Keystone authentication Secret                                                      |
 |                                  |                   | - Handles local cleanup via finalizers                                                        |
 |                                  |                   | Does NOT interact with Stack4Things.                                                          |
@@ -85,14 +86,14 @@ The flow involves OIDC authentication, a Mutating Admission Webhook, etcd persis
 
 ### Flow Summary
 
-- The user submits a `Project` using a Keystone OIDC JWT (`kubectl --token="$JWT" apply -f project.yaml`).
-- The Kubernetes API Server authenticates the JWT and extracts the user identity.
+- The user submits a new `Project` using a Keystone OIDC JWT (`kubectl --token="$JWT" apply -f project.yaml`).
+- The Kubernetes API Server authenticates the JWT via OIDC and extracts the user identity and group memberships.
 - The **Mutating Webhook** injects the authenticated username into `spec.owner`.
-- The mutated CRD is validated and stored in **etcd**.
-- The **RBAC Operator** detects the new Project and provisions:
-  - a dedicated Namespace  
-  - a Role defining project-level permissions.
-  - a RoleBinding mapping the Keystone user to the Role  
+- The new Project CR is validated and persisted in **etcd**
+- The **RBAC Operator** detects  the new Project resource and provisions the required access control and isolation primitives:
+  - a dedicated Namespace for the project;  
+  - a set of Roles defining project-level permissions;
+  - a corresponding set of RoleBindings that bind federated identity groups to those Roles.  
 - For each S4T Project, the RBAC Operator creates and manages a set of **federated groups** following a deterministic naming convention:
 ```bash
 s4t:<owner>-<projectName>:<role>
@@ -108,7 +109,7 @@ where `<role>` can be one of:
   Read-only or limited service usage permissions.
 
 These groups are bound to the corresponding Kubernetes `Role` objects through `RoleBinding` resources, enabling RBAC enforcement based on OIDC group claims.
-- Once the setup is complete, the operator marks the Project as **Ready**, enabling the S4T Crossplane provider to manage the remote resource in Stack4things.
+- Once the RBAC setup is complete, the operator marks the Project as Ready, enabling the S4T Crossplane provider to manage the corresponding remote resources in Stack4Things.
 
 ---
 
