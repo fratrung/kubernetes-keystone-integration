@@ -60,15 +60,15 @@ if [ ! -f "$MARKER_FILE" ]; then
   openstack group create --domain federated_domain federated_users || true
 
   # Progetto "holding" senza privilegi reali
-  openstack project create federated_access --domain federated_domain || true
+  #openstack project create federated_access --domain federated_domain || true
   # usa reader se esiste, altrimenti member
-  openstack role add --group federated_users --group-domain federated_domain \
-    --project federated_access --project-domain federated_domain reader || true
+  #openstack role add --group federated_users --group-domain federated_domain \
+  #  --project federated_access --project-domain federated_domain reader || true
 
   # Gruppo provider/platform admin (questi fanno provisioning)
   openstack group create --domain federated_domain s4t:platform-admins || true
   openstack role add --group s4t:platform-admins --group-domain federated_domain \
-    --domain federated_domain admin || true
+    --domain Default admin || true
 
   # Gruppo "project creator" (flag/logico: lo userai lato S4T/Kubernetes, NON qui)
   openstack group create --domain federated_domain s4t:project-creator || true
@@ -76,35 +76,58 @@ if [ ! -f "$MARKER_FILE" ]; then
    # Progetto IoT lab nel dominio Default (quello standard dei progetti)
   openstack project create iot-lab --domain Default || true
 
+  echo '[INFO] Creazione dei servizi di Iotronic...'
+
+  openstack project create service \
+    --domain Default \
+    --description "Service Project" || true
+
+  openstack service create iot \
+    --name Iotronic || true
+
+  echo '[INFO] Iotronic User Create...'
+  openstack user create iotronic \
+    --password unime || true
+
+  echo '[INFO] Iotronic roles...'
+  openstack role create admin_iot_project || true
+  openstack role create manager_iot_project || true
+  openstack role create user_iot || true
+
+  openstack role add --project service --user iotronic admin || true
+  openstack role add --project service --user iotronic admin_iot_project || true
+  openstack role add --project admin --user admin admin_iot_project || true
+
+
   # Gruppi specifici iot-lab nel dominio federated_domain
-  openstack group create --domain federated_domain 's4t:testuser-iot-lab:admin'  || true
-  openstack group create --domain federated_domain 's4t:testuser-iot-lab:member' || true
-  openstack group create --domain federated_domain 's4t:testuser-iot-lab:user'   || true
+  openstack group create --domain federated_domain 's4t:testuser-iot-lab:admin_iot_project'  || true
+  openstack group create --domain federated_domain 's4t:testuser-iot-lab:manager_iot_project' || true
+  openstack group create --domain federated_domain 's4t:testuser-iot-lab:user_iot'   || true
 
   # Assegna ruoli ai gruppi sul progetto iot-lab
   # Admin del progetto
   openstack role add \
-    --group 's4t:testuser-iot-lab:admin' \
+    --group 's4t:testuser-iot-lab:admin_iot_project' \
     --group-domain federated_domain \
     --project iot-lab \
     --project-domain Default \
-    admin || true
+    admin_iot_project || true
 
     # Member (dev/power user)
   openstack role add \
-    --group 's4t:testuser-iot-lab:member' \
+    --group 's4t:testuser-iot-lab:manager_iot_project' \
     --group-domain federated_domain \
     --project iot-lab \
     --project-domain Default \
-    member || true
+    manager_iot_project || true
 
   # User (solo utilizzo servizi / reader)
   openstack role add \
-    --group 's4t:testuser-iot-lab:user' \
+    --group 's4t:testuser-iot-lab:user_iot' \
     --group-domain federated_domain \
     --project iot-lab \
     --project-domain Default \
-    reader || true
+    user_iot || true
 
   # IdP + mapping + protocol
   openstack identity provider create keycloak \
@@ -124,7 +147,6 @@ if [ ! -f "$MARKER_FILE" ]; then
   echo ">>> Marker creato: $MARKER_FILE"
 
   echo ">>> Lascio Apache in esecuzione (wait PID=$APACHE_PID)"
-  # QUI NON LO UCCIDIAMO: restiamo attaccati al processo Apache
   echo ">>> Keystone Service Ready"
   wait $APACHE_PID
 else
