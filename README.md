@@ -34,7 +34,7 @@ information and user project definitions.
 This controller handles:
 
 - Automatic creation of per-project Kubernetes Namespaces  
-- Dynamic creation of project-level Roles (`admin_iot_project`, `manager_iot_project`, `user_iot`)  
+- Dynamic creation of project-level Roles that reflects the IoTronic Stack4things Roles (`admin_iot_project`, `manager_iot_project`, `user_iot`)  
 - RoleBinding generation based on federated OIDC/Keystone groups  
   following the `s4t:<owner>-<projectName>:<role>` naming convention  
 - Local project lifecycle cleanup via finalizers  
