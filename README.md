@@ -34,7 +34,7 @@ information and user project definitions.
 This controller handles:
 
 - Automatic creation of per-project Kubernetes Namespaces  
-- Dynamic creation of project-level Roles (`admin`, `member`, `user`)  
+- Dynamic creation of project-level Roles (`admin_iot_project`, `manager_iot_project`, `user_iot`)  
 - RoleBinding generation based on federated OIDC/Keystone groups  
   following the `s4t:<owner>-<projectName>:<role>` naming convention  
 - Local project lifecycle cleanup via finalizers  
@@ -126,9 +126,9 @@ where `<role>` can be one of:
 
 - `admin_iot_project`  
   Full administrative permissions on the project.
-- `member_iot_project`  
+- `manager_iot_project`  
   Developer / power-user permissions.
-- `user_iot_project`  
+- `user_iot`  
   Read-only or limited service usage permissions.
 
 These groups are bound to the corresponding Kubernetes `Role` objects through `RoleBinding` resources, enabling RBAC enforcement based on OIDC group claims.
