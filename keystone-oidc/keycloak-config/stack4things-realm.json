@@ -12,6 +12,12 @@
     { "name": "s4t:testuser-iot-lab:admin_iot_project" },
     { "name": "s4t:testuser-iot-lab:manager_iot_project" },
     { "name": "s4t:testuser-iot-lab:user_iot" },
+    { "name": "s4t:testuser-ai-lab:admin_iot_project" },
+    { "name": "s4t:testuser-ai-lab:manager_iot_project" },
+    { "name": "s4t:testuser-ai-lab:user_iot" },
+    { "name": "s4t:pippo-smart-grid-lab:admin_iot_project" },
+    { "name": "s4t:pippo-smart-grid-lab:manager_iot_project" },
+    { "name": "s4t:pippo-smart-grid-lab:user_iot" },
     {"name": "s4t:project-creator" }
   ],
  
@@ -158,11 +164,27 @@
       "firstName": "Test",
       "lastName": "User",
       "email": "testuser@example.com",
-      "groups": ["s4t:project-creator", "s4t:testuser-iot-lab:admin_iot_project"],
+      "groups": ["s4t:project-creator", "s4t:testuser-iot-lab:admin_iot_project", "s4t:testuser-ai-lab:admin_iot_project"],
       "credentials": [
         {
           "type": "password",
           "value": "testpassword",
+          "temporary": false
+        }
+      ]
+    },
+    {
+      "username": "pippo",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Pippo",
+      "lastName": "UserPippo",
+      "email": "pippo@example.com",
+      "groups": ["s4t:project-creator", "s4t:pippo-smart-grid-lab:admin_iot_project"],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "pippo",
           "temporary": false
         }
       ]

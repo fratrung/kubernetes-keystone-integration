@@ -74,7 +74,7 @@ if [ ! -f "$MARKER_FILE" ]; then
   openstack group create --domain federated_domain s4t:project-creator || true
 
    # Progetto IoT lab nel dominio Default (quello standard dei progetti)
-  openstack project create iot-lab --domain Default || true
+  openstack project create testuser-iot-lab --domain Default || true
 
   echo '[INFO] Creazione dei servizi di Iotronic...'
 
@@ -98,26 +98,35 @@ if [ ! -f "$MARKER_FILE" ]; then
   openstack role add --project service --user iotronic admin_iot_project || true
   openstack role add --project admin --user admin admin_iot_project || true
 
+  openstack user create s4t-platform \
+  --password platform-secret \
+  --domain Default || true
 
   # Gruppi specifici iot-lab nel dominio federated_domain
   openstack group create --domain federated_domain 's4t:testuser-iot-lab:admin_iot_project'  || true
   openstack group create --domain federated_domain 's4t:testuser-iot-lab:manager_iot_project' || true
   openstack group create --domain federated_domain 's4t:testuser-iot-lab:user_iot'   || true
 
+  openstack role add \
+  --user s4t-platform \
+  --user-domain Default \
+  --domain Default \
+  admin || true
+
   # Assegna ruoli ai gruppi sul progetto iot-lab
   # Admin del progetto
   openstack role add \
     --group 's4t:testuser-iot-lab:admin_iot_project' \
     --group-domain federated_domain \
-    --project iot-lab \
+    --project testuser-iot-lab \
     --project-domain Default \
     admin_iot_project || true
 
-    # Member (dev/power user)
+    # Manager (dev/power user)
   openstack role add \
     --group 's4t:testuser-iot-lab:manager_iot_project' \
     --group-domain federated_domain \
-    --project iot-lab \
+    --project testuser-iot-lab \
     --project-domain Default \
     manager_iot_project || true
 
@@ -125,7 +134,7 @@ if [ ! -f "$MARKER_FILE" ]; then
   openstack role add \
     --group 's4t:testuser-iot-lab:user_iot' \
     --group-domain federated_domain \
-    --project iot-lab \
+    --project testuser-iot-lab \
     --project-domain Default \
     user_iot || true
 

@@ -92,3 +92,41 @@ kube-public       Active   14m
 kube-system       Active   14m
 ```
 
+## RBAC for the project creators
+
+```bash
+kubectl apply -f deployments/bootstrap_rbac.yaml
+```
+bootstrap_RBAC.yaml:
+```bash
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: s4t-project-creator
+rules:
+- apiGroups: ["s4t.s4t.io"]
+  resources: ["projects"]
+  verbs: ["create","get","patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: s4t-project-creator-binding
+subjects:
+- kind: Group
+  name: s4t:project-creator
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: s4t-project-creator
+  apiGroup: rbac.authorization.k8s.io
+
+```
+The `ClusterRole` **s4t-project-creator** allows `create`, `get`, and `patch` operations on the `projects` resource in the `s4t.s4t.io` API group.  
+
+The `ClusterRoleBinding` binds this role to the **s4t:project-creator** group, so only members of this group can perform these actions.  
+
+After applying this RBAC, only users in the **s4t:project-creator** group can create or modify Project CRDs.
+
+After this, only the users of the "s4t:project-creator" groups can create the Project CR.
+
