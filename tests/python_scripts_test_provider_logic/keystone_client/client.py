@@ -1,5 +1,4 @@
 from openstack import connection 
-import argparse
 
 AUTH_URL = "http://localhost:5000/v3"
 USERNAME = "s4t-platform"
@@ -15,9 +14,6 @@ ROLES = [
     "user_iot"
 ]
 
-#SERVICE_USER = "iotronic"
-
-
 def connect_to_keystone() -> connection.Connection:
     return connection.Connection(
         region_name=REGION,
@@ -30,12 +26,6 @@ def connect_to_keystone() -> connection.Connection:
         },
         identity_api_version="3",
     )
-
-def test_connection():
-    try: 
-        conn = connect_to_keystone()
-    except:
-        print("Connection failed")
 
 def get_or_create_project(conn: connection.Connection, project_name: str):
     project = conn.identity.find_project(project_name)
@@ -82,19 +72,12 @@ def assign_role_to_groups(conn: connection.Connection, groups, roles, project):
             print(f"Il gruppo '{g.name}' ha già il ruolo '{role.name}' sul progetto '{project.name}'")
 
 
-def main():
-"""Usage: python3 project_provisioning.py --project <owner-projectName>"""
-    parser = argparse.ArgumentParser(description="Example workflow for S4T Provider")
-    parser.add_argument(
-        "--project", "-p",
-        required=True,
-        help="Name of the S4T project"
-    )
-    args = parser.parse_args()
-    c = connect_to_keystone()
-    project = get_or_create_project(c, args.project)
-    roles = get_s4t_roles(c)
-    groups = get_or_create_groups(c, project_name=project.name)
-    assign_role_to_groups(c, groups, roles, project)
+class KeystoneClient:
+    def __init__(self):
+        self.connection = connect_to_keystone()
 
-main()
+    def create_s4t_project_and_groups(self, projectName):
+        project = get_or_create_project(self.connection, projectName)
+        roles = get_s4t_roles(self.connection)
+        groups = get_or_create_groups(self.connection, project_name=projectName)
+        assign_role_to_groups(self.connection, groups, roles, project)

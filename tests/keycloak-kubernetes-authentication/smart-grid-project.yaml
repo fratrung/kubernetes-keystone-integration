@@ -1,8 +1,8 @@
 apiVersion: s4t.s4t.io/v1alpha1
 kind: Project
 metadata:
-  name: s4t-project-smart-grid-lab
+  name: s4t-project-smart-grid-test
 spec:
-  projectName: smart-grid-lab
+  projectName: smart-grid-test
   owner: https://host.k3d.internal:8443/realms/stack4things#pippo 
 
