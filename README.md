@@ -97,7 +97,7 @@ Stack4Things, ensuring end-to-end lifecycle management.**
 Creating a new `Project` resource automatically initializes the corresponding Stack4Things environment for the authenticated user.  
 The flow involves OIDC authentication, a Mutating Admission Webhook, etcd persistence, and the RBAC Operator that prepares the user’s development space.
 
-![RBAC Operator Sequence Diagram](images/RBAC_Operator_Sequence_Diagram.drawio.png)
+![RBAC Operator Sequence Diagram](images/RBAC_Operator_Sequence_Diagram.drawio.jpeg)
 
 ### Flow Summary
 
@@ -138,13 +138,13 @@ These groups are bound to the corresponding Kubernetes `Role` objects through `R
 
 ## Update S4T Project 
 
-WIP
+Not Allowed
 
 ---
 
 ## Delete S4T Project
 
-WIP
+![RBAC Operator Sequence Diagram: Delete Project](images/Sequence_Diagram-DeleteProject.jpeg)
 
 ---
 
