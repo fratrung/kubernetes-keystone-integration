@@ -30,7 +30,7 @@
     "remote": [
       {
         "type": "OIDC-groups",
-        "whitelist": ["^s4t:.*"]
+        "regex": ["^s4t:.*"]
       }
     ]
   }
