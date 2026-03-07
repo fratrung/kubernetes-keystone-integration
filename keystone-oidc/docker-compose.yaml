@@ -39,7 +39,7 @@ services:
       - ./keycloak-config/stack4things-realm.json:/opt/keycloak/data/import/stack4things-realm.json
       - ./keycloak-config/certs:/opt/keycloak/certs:ro
     networks:
-      - auth-net
+      - s4t
     depends_on:
       - postgres
 
@@ -53,45 +53,198 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
-      - auth-net
+      - s4t
 
   keystone:
     build: .
     container_name: keystone
+    restart: unless-stopped
     command: ["/usr/local/bin/keystone-entrypoint.sh"]
     ports:
       - "5000:5000"
     environment:
-      DB_HOST: mariadb
-      DB_PASSWORD: password_keystone
+      ADMIN_PASS: ${ADMIN_PASS}
+      OS_USERNAME: ${OS_USERNAME}
+      OS_PASSWORD: ${OS_PASSWORD}
+      OS_PROJECT_NAME: ${OS_PROJECT_NAME}
+      OS_USER_DOMAIN_NAME: ${OS_USER_DOMAIN_NAME}
+      OS_PROJECT_DOMAIN_NAME: ${OS_PROJECT_DOMAIN_NAME}
+      OS_AUTH_URL: ${OS_AUTH_URL}
+      OS_IDENTITY_API_VERSION: ${OS_IDENTITY_API_VERSION}
+      KEYSTONE_DB_NAME: ${KEYSTONE_DB_NAME}
+      KEYSTONE_DB_USER: ${KEYSTONE_DB_USER}
+      KEYSTONE_DBPASS: ${KEYSTONE_DBPASS}
+      DB_HOST: ${DB_HOST}
+      RABBIT_PASS: ${RABBIT_PASS}
+      REGION_NAME: ${REGION_NAME}
+      DB_CONNECTION_STRING: ${DB_CONNECTION_KEYSTONE}
     volumes:
       - ./keystone-config/keystone.conf:/etc/keystone/keystone.conf
       - ./keystone-config/keystone-mapping.json:/etc/keystone/keystone-mapping.json
       - ./keystone-config/sso_callback.html:/etc/keystone/sso_callback.html
       - ./keystone-config/wsgi-keystone.conf:/etc/apache2/sites-enabled/keystone.conf
     networks:
-      - auth-net
+      - s4t
+    healthcheck:
+      test: ["CMD", "test", "-f", "/etc/keystone/.bootstrapped"]
+      interval: 15s
+      retries: 10
+      start_period: 200s
+      timeout: 5s
     depends_on:
-      - mariadb
-      - keycloak
+      iotronic-db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      keycloak:
+        condition: service_started
 
-  mariadb:
-    image: mariadb:10.6
-    container_name: mariadb
+  iotronic-ui:
+      image: salvospina/iotronic-ui-kk
+      container_name: iotronic-ui
+      restart: unless-stopped
+      depends_on:
+        iotronic-db:
+          condition: service_healthy
+        rabbitmq:
+          condition: service_healthy
+      networks:
+        - s4t
+      ports:
+        - "80:80"
+      volumes:
+        - iotronic-ui_logs:/var/log/apache2
+        - ./conf_ui:/etc/openstack-dashboard
+        - ./conf_ui/openstack_auth_utils.py:/usr/lib/python2.7/dist-packages/openstack_auth/utils.py
+  
+
+  rabbitmq:
+    image: rabbitmq:3.7-management
+    container_name: rabbitmq
+    restart: always
     environment:
-      MARIADB_ROOT_PASSWORD: root_password
-      MARIADB_DATABASE: keystone
-      MARIADB_USER: keystone
-      MARIADB_PASSWORD: password_keystone
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+    ports:
+      - "5672:5672"
+      - "15672:15672"
     volumes:
-      - mariadb_data:/var/lib/mysql
+      - rabbitmq_data:/var/lib/rabbitmq
     networks:
-      - auth-net
-      
+      - s4t
+    healthcheck:
+      test: [ "CMD", "rabbitmqctl", "status" ]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+
+  rabbitmq-setup:
+    image: rabbitmq:3.7-management
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - s4t
+    entrypoint: [ "/bin/sh", "-c" ]
+    command: >
+      echo 'Aspettando RabbitMQ...'; for i in {1..30}; do
+        if rabbitmqctl status; then
+          echo 'RabbitMQ è pronto!';
+          break;
+        fi
+        echo 'RabbitMQ non ancora pronto, riprovo in 5 secondi...';
+        sleep 5;
+      done; echo "Configurazione dell'utente openstack..."; rabbitmqctl add_user openstack unime; rabbitmqctl set_permissions openstack '.*' '.*' '.*'; rabbitmqctl set_user_tags openstack administrator; echo 'Utente openstack creato con successo.';
+  
+  iotronic-db:
+    image: mariadb:focal
+    container_name: iotronic-db
+    restart: unless-stopped
+    networks:
+      - s4t
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - unime_iotronic_db_data:/var/lib/mysql
+      - ./db_init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}" ]
+      interval: 10s
+      retries: 5
+      start_period: 40s
+      timeout: 5s
+
+  iotronic-conductor:
+      image: salvospina/iotronic-conductor
+      container_name: iotronic-conductor
+      restart: unless-stopped
+      depends_on:
+        iotronic-db:
+          condition: service_healthy
+        rabbitmq:
+          condition: service_healthy
+        keystone:
+          condition: service_healthy
+      networks:
+        - s4t
+      environment:
+        # Credenziali DB Iotronic
+        MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD2}
+        DB_HOST: ${DB_HOST}
+        IOTRONIC_DB_NAME: ${IOTRONIC_DB_NAME}
+        IOTRONIC_DB_USER: ${IOTRONIC_DB_USER}
+        IOTRONIC_DBPASS: ${IOTRONIC_DBPASS} # Stringa di connessione
+        DB_CONNECTION_STRING: ${DB_CONNECTION_STRING}
+
+        # Credenziali OpenStack
+        OS_AUTH_URL: ${OS_AUTH_URL}
+        OS_USERNAME: ${OS_USERNAME}
+        OS_PASSWORD: ${OS_PASSWORD}
+        OS_PROJECT_NAME: ${OS_PROJECT_NAME}
+        OS_USER_DOMAIN_NAME: ${OS_USER_DOMAIN_NAME}
+        OS_PROJECT_DOMAIN_NAME: ${OS_PROJECT_DOMAIN_NAME}
+      ports:
+        - "8812:8812"
+      volumes:
+        - ./conf_conductor:/etc/iotronic
+        - iotronic_logs:/var/log/iotronic
+      healthcheck:
+        test: [ "CMD", "test", "-f", "/tmp/conductor-setup-done" ]
+        interval: 10s
+        timeout: 5s
+        retries: 5
+        start_period: 60s
+      command: >
+        /bin/bash -c "
+          apt-get update && apt-get install -y mysql-client nano;
+          echo '[INFO] Attesa del database MySQL...';
+          until mysql -h iotronic-db -uiotronic -punime -e 'SELECT 1' >/dev/null 2>&1; do
+            echo '[INFO] Database non ancora pronto, riprovo...';
+            sleep 5;
+          done;
+          #cd /opt/build/iotronic/iotronic/db/sqlalchemy;
+          #alembic -c alembic.ini upgrade head;
+          iotronic-dbsync;
+          echo '[INFO] Configurazione dei permessi sui log...';
+          chown -R iotronic:iotronic /var/log/iotronic;
+          echo '[INFO] Avvio di Iotronic Conductor...';
+          echo '[INFO] End of configuration!';  
+
+          touch /tmp/conductor-setup-done;  
+          exec /usr/local/bin/startConductor"
 volumes:
   postgres_data:
   mariadb_data:
+  iotronic_logs:
+  iotronic-ui_logs:
+  unime_iotronic_db_data:
+  rabbitmq_data:
 
 networks:
-  auth-net:
+  s4t:
     driver: bridge

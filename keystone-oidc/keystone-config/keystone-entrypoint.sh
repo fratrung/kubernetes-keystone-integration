@@ -76,6 +76,8 @@ if [ ! -f "$MARKER_FILE" ]; then
    # Progetto IoT lab nel dominio Default (quello standard dei progetti)
   openstack project create testuser-iot-lab --domain Default || true
 
+  openstack project create pippo-smart-grid-lab --domain Default || true
+
   echo '[INFO] Creazione dei servizi di Iotronic...'
 
   openstack project create service \
@@ -106,6 +108,9 @@ if [ ! -f "$MARKER_FILE" ]; then
   openstack group create --domain federated_domain 's4t:testuser-iot-lab:admin_iot_project'  || true
   openstack group create --domain federated_domain 's4t:testuser-iot-lab:manager_iot_project' || true
   openstack group create --domain federated_domain 's4t:testuser-iot-lab:user_iot'   || true
+  
+  openstack group create --domain federated_domain 's4t:pippo-smart-grid-lab:admin_iot_project'  || true
+ 
 
   openstack role add \
   --user s4t-platform \
@@ -119,6 +124,13 @@ if [ ! -f "$MARKER_FILE" ]; then
     --group 's4t:testuser-iot-lab:admin_iot_project' \
     --group-domain federated_domain \
     --project testuser-iot-lab \
+    --project-domain Default \
+    admin_iot_project || true
+
+    openstack role add \
+    --group 's4t:pippo-smart-grid-lab:admin_iot_project' \
+    --group-domain federated_domain \
+    --project pippo-smart-grid-lab \
     --project-domain Default \
     admin_iot_project || true
 

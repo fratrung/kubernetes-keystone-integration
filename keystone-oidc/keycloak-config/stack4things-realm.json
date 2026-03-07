@@ -49,11 +49,11 @@
         "consentRequired": false,
         "config": {
           "full.path": "false",
+          "claim.name": "groups",
+          "jsonType.label": "String",
           "id.token.claim": "true",
           "access.token.claim": "true",
-          "userinfo.token.claim": "true",
-          "claim.name": "groups",
-          "jsonType.label": "String"
+          "userinfo.token.claim": "true"
         }
       },
       {
@@ -164,7 +164,7 @@
       "firstName": "Test",
       "lastName": "User",
       "email": "testuser@example.com",
-      "groups": ["s4t:project-creator", "s4t:testuser-iot-lab:admin_iot_project", "s4t:testuser-ai-lab:admin_iot_project"],
+      "groups": ["s4t:project-creator", "s4t:testuser-iot-lab:admin_iot_project"],
       "credentials": [
         {
           "type": "password",

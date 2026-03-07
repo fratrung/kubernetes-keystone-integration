@@ -1,12 +1,21 @@
-<html>
-<body>
-    <h1>Login Success!</h1>
-    <p>You have been authenticated via Keycloak.</p>
-    <p>Please wait while we redirect you...</p>
-    <script type="text/javascript">
-        // In un setup reale, qui Horizon prenderebbe il token.
-        // Per il test, stampiamo il token nella console del browser.
-        console.log("Keystone Authentication Complete.");
-    </script>
-</body>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+  <title>Waiting for OpenStack Dashboard...</title>
+  <script type="text/javascript">
+    function submit() {
+      var element = document.getElementById("sso_form");
+      if (element) {
+        element.submit();
+      }
+    }
+    window.onload = submit;
+  </script>
+  </head>
+  <body>
+    <form id="sso_form" action="http://localhost/horizon/auth/websso/" method="post">
+      <input type="hidden" name="token" value="${token}" />
+    </form>
+    <p>Please wait while we redirect you to the OpenStack Dashboard...</p>
+  </body>
 </html>
